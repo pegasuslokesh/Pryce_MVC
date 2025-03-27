@@ -1,0 +1,162 @@
+﻿@model IEnumerable<Pryce_MVC.Models.ReligionMaster>
+
+@{
+    ViewData["Title"] = "Religion Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    .content-wrapper {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+
+    .content-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 80px;
+        margin-left: 250px;
+    }
+
+    .tab-container {
+        flex-shrink: 0;
+    }
+
+    .tab-content {
+        margin-left: 250px;
+        padding-left: 20px;
+        margin-right: auto;
+    }
+
+    .action-icons a {
+        font-size: 18px;
+        margin-right: 10px;
+    }
+</style>
+
+@await Html.PartialAsync("_Tabs", Model)
+
+<!-- ✅ Tab Content -->
+<div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="list">
+        <div id="listContent">
+            @* List content will be loaded here via JavaScript *@
+        </div>
+    </div>
+    <div class="tab-pane fade" id="new">
+        <div id="newContent">
+            @* New/Edit form content will be loaded here via JavaScript *@
+        </div>
+    </div>
+    <div class="tab-pane fade" id="inactive">
+        <div id="inactiveContent">
+            @* Inactive records content will be loaded here via JavaScript *@
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadPage(1); // ✅ Load list tab on page load
+
+            // ✅ Function to Load Page with Pagination
+            function loadPage(page, searchParams = {}) {
+                searchParams.page = page; // Ensure page is always included
+
+                $.ajax({
+                    url: '/Religion_Master/ListPartial',
+                    type: 'GET',
+                    data: searchParams,  // ✅ Send filters along with pagination
+                    success: function (data) {
+                        $("#listContent").html(data);
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Failed to load data.", "error");
+                    }
+                });
+            }
+
+
+            // ✅ Handle Pagination Click
+            $(document).on("click", ".pagination-container a", function (e) {
+                e.preventDefault();
+                var page = $(this).attr("href").split("page=")[1];
+                loadPage(page);
+            });
+
+            // ✅ Function to Load Tab Content & Hide Others
+            function loadTabContent(tabId, url) {
+                $(".tab-content > .tab-pane").removeClass("show active"); // Hide all tabs
+                $("#" + tabId).addClass("show active"); // Show the clicked tab
+
+                $.get(url, function (data) {
+                    $("#" + tabId + "Content").html(data);
+                });
+            }
+
+            // ✅ Tab Click Handlers
+            $("#list-tab").click(function () {
+                loadTabContent("list", "/Religion_Master/ListPartial");
+            });
+
+            $("#new-tab").click(function () {
+                loadTabContent("new", "/Religion_Master/NewPartial");
+            });
+
+            $("#inactive-tab").click(function () {
+                loadTabContent("inactive", "/Religion_Master/InactivePartial");
+            });
+
+            // ✅ Handle Edit Button Click (Event Delegation)
+            $(document).on("click", ".edit-btn", function () {
+                var id = $(this).data("id");
+                loadTabContent("new", "/Religion_Master/EditPartial/" + id);
+                $("#new-tab").tab('show');
+                $("#new-tab").text("Edit");
+            });
+
+            // ✅ Handle Delete Button Click
+            $(document).on("click", ".delete-btn", function () {
+                var id = $(this).data("id");
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/Religion_Master/Delete/" + id,
+                            type: "POST",
+                            headers: {
+                                "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function () {
+                                Swal.fire("Deleted!", "Record deleted successfully.", "success");
+                                loadPage(1); // ✅ Reload list after deletion
+                            },
+                            error: function (xhr) {
+                                console.log("Error Response:", xhr.responseText);
+                                Swal.fire("Error", "An error occurred while deleting the record.", "error");
+                            }
+                        });
+                    }
+                });
+            });
+
+            // ✅ Initial Tab Load Check
+            if ($("#list-tab").hasClass("active")) {
+                loadTabContent("list", "/Religion_Master/ListPartial");
+            }
+        });
+    </script>
+}

@@ -1,0 +1,42 @@
+﻿@model Pryce_MVC.Models.Religion_Master
+
+@{
+    var isEdit = Model?.Religion_Id > 0;
+    ViewData["Title"] = isEdit ? "Edit Religion" : "Create New Religion";
+}
+
+<div class="card shadow-sm mx-auto w-100" style="max-width: 100%; background-color: #ffffff; border: 1px solid #ddd;">
+    <div class="card-header text-white bg-light" style=" padding: 8px;">
+        <h6 class="mb-0 text-center">@ViewData["Title"]</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="@(isEdit ? "Edit" : "Create")" method="post">
+            @if (isEdit)
+            {
+                <input type="hidden" asp-for="Religion_Id" />
+            }
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Religion Name</label>
+                    <input asp-for="Religion_Name" class="form-control border-1" placeholder="Enter religion name" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Religion Name</label>
+                    <input asp-for="Religion_Name" class="form-control border-1" placeholder="Enter religion name" required />
+                   @*  <select asp-for="Country_Id" class="form-select border-1" asp-items="@(ViewData["Country_Id"] as SelectList)">
+                        <option value="">-- Choose Country --</option>
+                    </select> *@
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-success btn-sm px-4 fw-bold">
+                        @(isEdit ? "Update" : "Save")
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

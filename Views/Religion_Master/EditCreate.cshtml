@@ -1,0 +1,54 @@
+﻿@model Pryce_MVC.Models.Religion_Master
+
+@{
+    ViewData["Title"] = (Model?.Religion_Id > 0) ? "Edit Religion" : "Create New Religion";
+    var isEdit = Model?.Religion_Id > 0;
+}
+
+@{
+    ViewData["ActiveTab"] = isEdit ? "Edit" : "New";
+}
+
+@await Html.PartialAsync("_Tabs", Model)
+
+    
+</style>
+
+<div style="margin-left:250px" class="container mt-5">
+   
+    <div class="container mt-5" >
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card edit-create-religion shadow-lg rounded" style="display: flex, right: 12px, position: absolute, width: 82%">
+                    <div class="card-header text-white text-center fw-bold @(isEdit ? "bg-primary" : "bg-success")">
+                        <h5 class="mb-0">@ViewData["Title"]</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="@(isEdit ? "Edit" : "Create")" method="post">
+                            @if (isEdit)
+                            {
+                                <input type="hidden" asp-for="Religion_Id" />
+                            }
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Religion Name</label>
+                                <input asp-for="Religion_Name" class="form-control border-2" placeholder="Enter religion name" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Select Country</label>
+                                <select asp-for="Country_Id" class="form-select border-2" asp-items="@(ViewData["Country_Id"] as SelectList)">
+                                    <option value="">-- Choose Country --</option>
+                                </select>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn @(isEdit ? "btn-primary" : "btn-success") fw-bold">
+                                    @(isEdit ? "Save Changes" : "Create")
+                                </button>
+                                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

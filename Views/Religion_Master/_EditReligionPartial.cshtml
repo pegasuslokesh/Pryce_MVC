@@ -1,0 +1,25 @@
+﻿@model Pryce_MVC.Models.Religion_Master
+<form id="editForm">
+    <input type="hidden" id="Religion_Id" name="Religion_Id" value="@Model.Religion_Id" />
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Religion Name</label>
+        <input type="text" id="Religion_Name" name="Religion_Name" class="form-control" value="@Model.Religion_Name" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Select Country</label>
+        <select id="Country_Id" name="Country_Id" class="form-select">
+            <option value="">-- Choose Country --</option>
+            @if (ViewData["Country_Id"] != null)
+            {
+                @foreach (SelectListItem item in (SelectList)ViewData["Country_Id"])
+                {
+                    <option value="@item.Value" selected="@(item.Value == Model.Country_Id.ToString())">@item.Text</option>
+                }
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100 fw-bold">Save Changes</button>
+</form>

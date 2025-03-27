@@ -1,0 +1,131 @@
+﻿@model Pryce_MVC.Models.Religion_Master
+
+@{
+    ViewData["Title"] = "Create Religion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+    .content-wrapper {
+        margin-left: 250px; /* Adjust according to sidebar width */
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+
+    .content-area {
+        margin-left: 650px; /* Same as other content */
+        padding: 20px;
+    }
+
+    /* Remove margin-left from .card */
+    .card {
+        /* Other card styles */
+    }
+
+    /* Keep other styles if you have them */
+    .card-header {
+        /* Your card header styles */
+    }
+
+    .card-body {
+        /* Your card body styles */
+    }
+
+    .form-label {
+        /* Your form label styles */
+    }
+
+    .form-control {
+        /* Your form control styles */
+    }
+
+    .form-select {
+        /* Your form select styles */
+    }
+
+    .btn {
+        /* Your button styles */
+    }
+
+    .content-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 80px;
+        margin-left: 250px;
+    }
+
+    .tab-container {
+        flex-shrink: 0;
+    }
+
+    .tab-content {
+        margin-left: 250px;
+        padding-left: 20px;
+        margin-right: auto;
+    }
+
+    /*  .edit-create-religion {
+            display: flex;
+            right: 12px;
+            position: absolute;
+            width: 82%;
+        } */
+
+    /* Ensure action icons are properly spaced */
+    .action-icons a {
+        font-size: 18px;
+        margin-right: 10px;
+    }
+
+    #editPartialViewContainer {
+        margin-left: 250px; /* Match the tab-content margin-left */
+        padding-left: 20px;
+        margin-right: auto;
+        margin-top: 20px; /* Add some space between tabs and partial view */
+    }
+</style>
+<div class="container-fluid mt-4">
+    <div class="tab-content">
+    <div class="card edit-create-religion shadow-lg" style="display:flex, position: absolute, right: 0, width:82%">
+        <div class="card-header bg-primary text-white">
+            <h4 class="text-center">Add New Religion1111</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row">
+                    <!-- Religion Name -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Religion_Name" class="form-label fw-bold">Religion Name</label>
+                            <input asp-for="Religion_Name" class="form-control form-control-lg" placeholder="Enter religion name" />
+                            <span asp-validation-for="Religion_Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Country Dropdown -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Country_Id" class="form-label fw-bold">Select Country</label>
+                            <select asp-for="Country_Id" class="form-select form-select-lg" asp-items="ViewBag.Country_Id">
+                                <option value="">-- Choose Country --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">Create</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 ms-2">← Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

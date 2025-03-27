@@ -1,0 +1,94 @@
+﻿<style>
+    .content-wrapper {
+        margin-left: 250px; /* Adjust according to sidebar width */
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+
+    .content-area {
+        margin-left: 650px; /* Same as other content */
+        padding: 20px;
+    }
+
+    /* Remove margin-left from .card */
+    .card {
+        /* Other card styles */
+    }
+
+    /* Keep other styles if you have them */
+    .card-header {
+        /* Your card header styles */
+    }
+
+    .card-body {
+        /* Your card body styles */
+    }
+
+    .form-label {
+        /* Your form label styles */
+    }
+
+    .form-control {
+        /* Your form control styles */
+    }
+
+    .form-select {
+        /* Your form select styles */
+    }
+
+    .btn {
+        /* Your button styles */
+    }
+
+    .content-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 80px;
+        margin-left: 250px;
+    }
+
+    .tab-container {
+        flex-shrink: 0;
+    }
+
+    .tab-content {
+        margin-left: 250px;
+        padding-left: 20px;
+        margin-right: auto;
+    }
+
+    /*  .edit-create-religion {
+            display: flex;
+            right: 12px;
+            position: absolute;
+            width: 82%;
+        } */
+    /* Ensure action icons are properly spaced */
+    .action-icons a {
+        font-size: 18px;
+        margin-right: 10px;
+    }
+
+    #editPartialViewContainer {
+        margin-left: 250px; /* Match the tab-content margin-left */
+        padding-left: 20px;
+        margin-right: auto;
+        margin-top: 20px; /* Add some space between tabs and partial view */
+    }
+</style>
+<div class="content-container">
+    <h2>Religion Master</h2>
+    <div class="tab-container">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button class="nav-link @(ViewData["ActiveTab"] == "List" ? "active" : "") fw-bold" id="list-tab" data-bs-toggle="tab" data-bs-target="#list">List</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link @(ViewData["ActiveTab"] == "New" ? "active" : "") fw-bold" id="new-tab" data-bs-toggle="tab" data-bs-target="#new">New</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link @(ViewData["ActiveTab"] == "Inactive" ? "active" : "") fw-bold" id="inactive-tab" data-bs-toggle="tab" data-bs-target="#inactive">Bin</button>
+            </li>
+        </ul>
+    </div>
+</div>

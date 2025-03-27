@@ -1,0 +1,117 @@
+﻿@model Pryce_MVC.Models.Religion_Master
+
+@{
+    ViewData["Title"] = "Edit Religion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Modern, attractive design */
+    .edit-container {
+        margin-top: 80px; /* Adjust for navbar */
+        margin-left: 250px; /* Adjust for sidebar */
+        padding: 30px;
+        background-color: #f8f9fa; /* Light background */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+        .edit-container h1 {
+            color: #343a40; /* Dark heading */
+            margin-bottom: 25px;
+            border-bottom: 2px solid #dee2e6; /* Light border */
+            padding-bottom: 10px;
+        }
+
+        .edit-container h4 {
+            color: #6c757d; /* Light heading */
+            margin-bottom: 20px;
+        }
+
+        .edit-container .form-group {
+            margin-bottom: 25px;
+        }
+
+        .edit-container label {
+            font-weight: 500; /* Slightly bold */
+            color: #495057; /* Darker label */
+        }
+
+        .edit-container .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 10px 15px;
+            font-size: 1rem;
+        }
+
+            .edit-container .form-control:focus {
+                border-color: #80bdff; /* Focus border */
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+        .edit-container .text-danger {
+            color: #dc3545; /* Red error text */
+            font-size: 0.9rem;
+        }
+
+        .edit-container .btn-primary {
+            background-color: #007bff; /* Primary button */
+            border-color: #007bff;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+        }
+
+            .edit-container .btn-primary:hover {
+                background-color: #0069d9;
+                border-color: #0062cc;
+            }
+
+        .edit-container .btn-secondary {
+            background-color: #6c757d; /* Secondary button */
+            border-color: #6c757d;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+        }
+
+            .edit-container .btn-secondary:hover {
+                background-color: #5a6268;
+                border-color: #545b62;
+            }
+</style>
+
+<div class="edit-container">
+    <h1>Edit Religion</h1>
+
+    <h4>Religion Master</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Religion_Id" />
+                <div class="form-group">
+                    <label asp-for="Religion_Name" class="control-label">Religion Name</label>
+                    <input asp-for="Religion_Name" class="form-control" />
+                    <span asp-validation-for="Religion_Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Country_Id" class="control-label">Country</label>
+                    <select asp-for="Country_Id" class="form-control" asp-items="ViewBag.Country_Id"></select>
+                    <span asp-validation-for="Country_Id" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

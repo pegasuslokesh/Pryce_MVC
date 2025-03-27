@@ -1,0 +1,114 @@
+/* Ensure body does not get pushed */
+body {
+    padding-top: 60px; /* Match navbar height */
+    margin: 0;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Navbar Styles */
+.navbar {
+    height: 60px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #fff;
+    z-index: 1030;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px; /* Default width */
+    height: 100vh;
+    position: fixed;
+    top: 0; /* Start from top */
+    left: 0;
+    background: #343a40;
+    color: white;
+    padding-top: 60px; /* Ensure navbar space */
+    transition: width 0.3s ease-in-out;
+    overflow-y: auto;
+}
+
+    /* Sidebar Collapsed */
+    .sidebar.collapsed {
+        width: 60px; /* Smaller width */
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .sidebar ul li {
+            padding: 10px;
+            transition: all 0.3s;
+        }
+
+            .sidebar ul li a {
+                color: white;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                transition: all 0.3s;
+                padding: 10px;
+            }
+
+                .sidebar ul li a:hover {
+                    background: #007bff;
+                    padding-left: 15px;
+                }
+
+    /* Hide text when collapsed */
+    .sidebar.collapsed ul li a span {
+        display: none;
+    }
+
+    /* Sidebar Icons */
+    .sidebar ul li a i {
+        margin-right: 10px;
+    }
+
+/* Main Content */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+    margin-top: 60px; /* Ensures no overlap with navbar */
+    min-height: calc(100vh - 60px); /* Adjusts to full height minus navbar */
+}
+/* Add padding to the top to avoid overlap with the navbar */
+.container.mt-4 {
+    margin-top: 80px !important; /* Adjust the value as needed */
+}
+/* Adjust content when sidebar is collapsed */
+.sidebar.collapsed + .content {
+    margin-left: 60px; /* Adjust content width when sidebar is collapsed */
+    transition: margin-left 0.3s ease-in-out;
+}
+
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+
+    .content {
+        margin-left: 60px;
+    }
+
+    .sidebar ul li a span {
+        display: none; /* Hide text */
+    }
+
+    .edit-create-religion {
+        display: flex;
+        right: 12px;
+        position: absolute;
+        width: 82%;
+    }
+    }
+}
