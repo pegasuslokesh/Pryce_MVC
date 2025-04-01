@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Pryce_MVC.Models.Religion_Master>
+﻿@* @* @model IEnumerable<Pryce_MVC.Models.ReligionMaster>
 
 <div class="card shadow-sm">
     <div class="card-header bg-secondary text-white">
@@ -22,14 +22,14 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
+                           @*  <tr>
                                 <td>@item.Religion_Name</td>
                                 <td>@item.Country?.Country_Name</td>
-                            </tr>
-                        }
-                    </tbody>
+                            </tr> *@
+                       @*  } *@
+                    @* </tbody>
                 </table>
-            </div>
-        }
-    </div>
-</div>
+            </div> *@
+       @*  }
+    </div> *@
+@* </div> *@ 

@@ -19,20 +19,23 @@ namespace Pryce_MVC.Data
         public DbSet<Country_Master> Country_Master { get; set; }
         public DbSet<Religion_Master> Religion_Master { get; set; }
         public DbSet<ReligionMaster> ReligionMasters { get; set; }
+        public DbSet<Company_Master> CompanyMasters { get; set; }
+        public DbSet<Company_Limited> CompanyLimiteds { get; set; }
+        public DbSet<Currency_Master> CurrencyMasters { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Pryce_Master_Module>()
-                .HasMany(m => m.ObjectModules)
-                .WithOne(o => o.MasterModule)
-                .HasForeignKey(o => o.Module_id)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Religion_Master>()
-            .HasOne(r => r.Country)
-            .WithMany(c => c.Religions)
-            .HasForeignKey(r => r.Country_Id)
-            .OnDelete(DeleteBehavior.Cascade);
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Pryce_Master_Module>()
+        //        .HasMany(m => m.ObjectModules)
+        //        .WithOne(o => o.MasterModule)
+        //        .HasForeignKey(o => o.Module_id)
+        //        .OnDelete(DeleteBehavior.Cascade);
+        //    modelBuilder.Entity<Religion_Master>()
+        //    .HasOne(r => r.Country)
+        //    .WithMany(c => c.Religions)
+        //    .HasForeignKey(r => r.Country_Id)
+        //    .OnDelete(DeleteBehavior.Cascade);
+        //}
 
         public override int SaveChanges()
         {

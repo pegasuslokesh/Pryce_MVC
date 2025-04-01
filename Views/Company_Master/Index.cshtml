@@ -1,7 +1,7 @@
 ﻿@* @model IEnumerable<Pryce_MVC.Models.ReligionMaster> *@
 
 @{
-    ViewData["Title"] = "Religion Master";
+    ViewData["Title"] = "Company Master";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -58,11 +58,14 @@
     }
 
     @@keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
 </style>
 
-@Html.Partial("_Tabs")
+@await Html.PartialAsync("~/Views/Religion_Master/_Tabs.cshtml")
+
 
 <!-- ✅ Loader -->
 <div class="loader">
@@ -113,7 +116,7 @@
                     showLoader(); // ✅ Show loader while fetching data
 
                     $.ajax({
-                        url: '/Religion_Master/ListPartial',
+                        url: '/Company_Master/ListPartial',
                         type: 'GET',
                         success: function (data) {
                             $("#listContent").html(data);
@@ -136,11 +139,11 @@
             });
 
             $("#new-tab").click(function () {
-                loadTabContent("new", "/Religion_Master/InsertReligion");
+                loadTabContent("new", "/Company_Master/InsertReligion");
             });
 
             $("#inactive-tab").click(function () {
-                loadTabContent("inactive", "/Religion_Master/InactivePartial");
+                // loadTabContent("inactive", "/Company_Master/InactivePartial");
             });
 
             // ✅ Function to Load Tab Content (Avoid Reloading List Tab)

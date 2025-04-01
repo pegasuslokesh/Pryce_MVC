@@ -1,0 +1,502 @@
+﻿@model Pryce_MVC.Models.Company_Master
+
+@{
+    var isEdit = Model?.Company_Id > 0;
+    ViewData["Title"] = isEdit ? "Edit Company" : "Create New Company";
+}
+<style>
+    .ui-autocomplete {
+        z-index: 1100 !important;
+        background-color: white;
+        border: 1px solid #ddd;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .modal-dialog {
+        max-width: 1400px !important;
+        
+        padding-left: 300px;
+    }
+
+    .modal {
+        display: flex;
+        justify-content: flex-end; /* Align to the right */
+        align-items: center; /* Center vertically */
+    }
+    .modal-content {
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-header {
+        background: linear-gradient(to right, #2962FF, #2979FF);
+        color: white;
+        padding: 10px 15px;
+        border-bottom: none;
+    }
+
+        .custom-header i {
+            margin-right: 10px;
+        }
+
+    .new-button {
+        float: right;
+        border: none;
+    }
+
+    .toggle-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .form-control, .form-select {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 12px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #bbb;
+            box-shadow: none;
+        }
+
+    .row > div {
+        padding-right: 5px;
+    }
+
+    .additional-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    .add-button {
+        border: none;
+    }
+
+    .reset-button {
+        color: #333;
+    }
+</style>
+
+<div class="card shadow-sm mx-auto w-100" style="max-width: 100%; background-color: #ffffff; border: 1px solid #ddd;">
+    <div class="card-header text-white bg-light" style="padding: 8px;">
+        <h6 class="mb-0 text-center">@ViewData["Title"]</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="@(isEdit ? "EditPartial" : "InsertCompany")" method="post">
+            @if (isEdit)
+            {
+                <input type="hidden" asp-for="Company_Id" />
+            }
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Company Code *</label>
+                        <input asp-for="Company_Code" class="form-control border-1" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Company Name *</label>
+                        <input id="CompanyName" asp-for="Company_Name" class="form-control border-1" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Company Name (Local)</label>
+                        <input asp-for="Company_Name_L" class="form-control border-1" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Parent Company Name</label>
+                        <select id="ParentCompanyDropdown" class="form-select">
+                            <option value="">Select Parent Company</option>
+                            @if (ViewBag.CompanyList != null)
+                            {
+                                foreach (var company in (List<Pryce_MVC.Models.Company_Master>)ViewBag.CompanyList)
+                                {
+                                    <option value="@company.Company_Name">@company.Company_Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Address Name</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control border-1" />
+                            <button type="button" class="btn btn-primary btn-sm ms-2">Add</button>
+                            <button type="button" class="btn btn-info btn-sm ms-2 open-address-modal">New</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Country Name *</label>
+                        <select asp-for="Country_Id" class="form-select" required>
+                            <option value="1">India</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Manager</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control border-1" />
+                            <button type="button" class="btn btn-info btn-sm ms-2">New</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">GSTIN No</label>
+                        <input asp-for="Commerical_License_No" class="form-control border-1" />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3 text-center">
+                        <label class="form-label fw-bold">Company Logo</label>
+                        <div class="border p-3 d-flex justify-content-center align-items-center" style="height: 150px; background-color: #f8f9fa;">
+                            <img id="logoPreview" src="~/images/no-image.png" alt="No Image Available" style="max-height: 100%;" />
+                        </div>
+                        <input type="file" id="fileInput" name="file" class="d-none" accept="image/*" />
+                        <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('fileInput').click();">File Manager</button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Currency Name *</label>
+                        <select id="ParentCompanyDropdown" class="form-select">
+                            <option value="">Select Currency Name </option>
+                            @if (ViewBag.CompanyList != null)
+                            {
+                                foreach (var company in (List<Pryce_MVC.Models.Currency_Master>)ViewBag.CurrencyList)
+                                {
+                                    <option value="@company.Currency_Name">@company.Currency_Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">License No.</label>
+                        <input asp-for="Field1" class="form-control border-1" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <button type="reset" class="btn btn-secondary btn-sm px-4 fw-bold">Reset</button>
+                    <button type="button" class="btn btn-danger btn-sm px-4 fw-bold">Cancel</button>
+                    <button type="submit" class="btn btn-success btn-sm px-4 fw-bold">Next</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header custom-header">
+                    <i class="fas fa-envelope-open-text"></i>  <h5 class="modal-title">New Address</h5>
+                    <button class="btn btn-sm btn-light new-button">New</button>
+                </div>
+                <div class="modal-body">
+                    <form id="addressForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Address Category *</label>
+                                <select class="form-select">
+                                    <option value="">--Select--</option>
+                                    <option value="home">Home</option>
+                                    <option value="office">Office</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Address Name *</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Address *</label>
+                            <textarea class="form-control"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label>Country</label>
+                                <select class="form-select">
+                                    <option>India</option>
+                                    <option>USA</option>
+                                    <option>Canada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>State</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>City</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>PinCode</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Email</label>
+                                <input type="email" class="form-control">
+                            </div>
+                        </div>
+                        <div class="additional-info">
+                            <label>Additional Information</label>
+                            <button type="button" class="btn btn-sm btn-light add-button" id="toggleAdditionalInfo">+</button>
+                        </div>
+                       @*  <div id="additionalInfoFields" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label>Street No.</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Block</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Avenue</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Alternate Email</label>
+                                    <input type="email" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Website</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Longitude</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Latitude</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <button type="button" class="btn btn-primary">Set Value</button>
+                                    <button type="button" class="btn btn-info">Map</button>
+                                </div> *@
+                            @* </div> *@
+                            <div class="mb-3">
+                                <label>Contact Type</label>
+                                <select id="contactType" class="form-select">
+                                    <option value="mobile">Mobile</option>
+                                    <option value="phone">Phone</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label>Country Code</label>
+                                    <input type="text" id="countryCode" class="form-control" value="+91" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Number</label>
+                                    <input type="text" id="phoneNumber" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Extension No.</label>
+                                    <input type="text" id="extensionNo" class="form-control" />
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <button type="button" class="btn btn-success" id="addNumber">Add Number</button>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Added Number List</label>
+                                <button type="button" class="btn btn-sm btn-light toggle-container" id="toggleNumberList">+</button>
+                                <table class="table table-bordered" id="addedNumberTable" style="display: none;">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Code</th>
+                                            <th>Number</th>
+                                            <th>Is Default</th>
+                                            <th>Extension</th>
+                                            
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="addedNumberList">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label>Street No.</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Block</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Avenue</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Alternate Email</label>
+                                    <input type="email" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Website</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Longitude</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Latitude</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <button type="button" class="btn btn-primary">Set Value</button>
+                                    <button type="button" class="btn btn-info">Map</button>
+                                </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="saveAddress">Save</button>
+                    <button type="button" class="btn btn-light reset-button">Reset</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        console.log("Autocomplete script loaded!");
+
+        $(".btn-info").click(function () {
+            if ($("#addressModal").length > 0) {
+                console.log("Opening modal...");
+                $("#addressModal").modal("show");
+            } else {
+                console.error("Modal element not found!");
+            }
+        });
+        $("#toggleNumberList").click(function () {
+            $("#addedNumberTable").toggle();
+            $(this).text($(this).text() === '+' ? '-' : '+');
+        });
+        $("#CompanyName").autocomplete({
+            source: function (request, response) {
+                console.log("🔍 Searching for:", request.term);
+
+                $.ajax({
+                    url: '@Url.Action("GetCompanyNames", "Company_Master")',
+                    type: "GET",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        console.log("✅ Received data from server:", data);
+
+                        if (data.length === 0) {
+                            console.warn("⚠️ No matching companies found!");
+                        }
+
+                        response(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("❌ AJAX Error:", status, error);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                console.log("✅ Selected:", ui.item.value);
+                $("#CompanyName").val(ui.item.value);
+            }
+        });
+
+        document.getElementById("fileInput").addEventListener("change", function (event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("logoPreview").src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        let numbers = []; // Array to store added numbers
+
+        $("#addNumber").click(function () {
+            const type = $("#contactType").val();
+            const code = $("#countryCode").val();
+            const number = $("#phoneNumber").val();
+            const extension = $("#extensionNo").val();
+            if (number.trim() !== "") {
+                // Add the number
+                numbers.push({ type, code, number, extension });
+                updateNumberList();
+            } else {
+                alert("Number cannot be empty."); // Optionally, show an alert
+            }
+
+        });
+
+        function updateNumberList() {
+            const list = $("#addedNumberList");
+            list.empty(); // Clear existing list
+
+            if (numbers.length > 0) {
+                $("#addedNumberTable").show();
+                $("#toggleNumberList").show();
+                numbers.forEach((item, index) => {
+                    list.append(`
+                                    <tr>
+                                        <td>${item.type}</td>
+                                        <td>${item.code}</td>
+                                        <td>${item.number}</td>
+                                        <td><input type="checkbox" /></td>
+                                        <td>${item.extension}</td>
+                                       
+                                        <td><button type="button" class="btn btn-danger btn-sm removeNumber" data-index="${index}">X</button></td>
+                                    </tr>
+                                `);
+                });
+            } else {
+                $("#addedNumberTable").hide();
+                $("#toggleNumberList").hide();
+            }
+        }
+
+        $(document).on("click", ".removeNumber", function () {
+            const index = $(this).data("index");
+            numbers.splice(index, 1); // Remove from array
+            updateNumberList();
+        });
+
+        $("#toggleAdditionalInfo").click(function () {
+            $("#additionalInfoFields").toggle();
+            $(this).text($(this).text() === '+' ? '-' : '+');
+        });
+    });
+</script>

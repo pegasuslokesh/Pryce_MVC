@@ -1,4 +1,4 @@
-﻿@model IPagedList<Pryce_MVC.Models.ReligionMaster>
+﻿@model IPagedList<Pryce_MVC.Models.Company_Master>
 
 @using X.PagedList
 @using X.PagedList.Mvc.Core
@@ -16,11 +16,12 @@
             <div class="col-md-4">
                 <select id="searchColumn" class="form-select">
                     <option value="">Select Column</option>
-                    <option value="Religion_Id">Religion Id</option>
-                    <option value="Religion">Religion Name</option>
-                    <option value="Religion_L">Religion Name (Local)</option>
-                    <option value="CreatedBy">Created By</option>
-                    <option value="ModifiedBy">Modified By</option>
+                    <option value="Company_Id">Company Id</option>
+                    <option value="Company_Name">Company Name</option>
+                    <option value="Company_Name_L">Company Name(Local)</option>
+                    <option value="ParentCompanyName">Parent Company Name</option>
+                    <option value="Company_Code">Company Code</option>
+                   @*  <option value="ModifiedBy">Modified By</option> *@
                 </select>
             </div>
             <div class="col-md-4">
@@ -57,17 +58,17 @@
                     <thead class="table-light">
                         <tr>
                             <th class="text-center" style="width: 50px;">Action</th>
-                            <th class="sortable" data-column="Religion_Id">Religion Id <i class="fas fa-sort"></i></th>
-                            <th class="sortable" data-column="Religion">Religion Name <i class="fas fa-sort"></i></th>
-                            <th class="sortable" data-column="Religion_L">Religion Name (Local) <i class="fas fa-sort"></i></th>
-                            <th class="sortable" data-column="CreatedBy">Created By <i class="fas fa-sort"></i></th>
-                            <th class="sortable" data-column="ModifiedBy">Modified By <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-column="Company_Id">Company Id <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-column="Company_Name">Company Name <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-column="Company_Name_L">Company Name (Local) <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-column="ParentCompanyName">Parent Compan Name <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-column="Company_Code">Company Code <i class="fas fa-sort"></i></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr data-id="@item.Religion_Id">
+                            <tr data-id="@item.Company_Id">
                                 <td class="text-center">
                                     <div class="dropdown">
                                         <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -75,24 +76,24 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <a class="dropdown-item edit-btn" href="@Url.Action("EditPartial", new { id = item.Religion_Id })">
+                                                <a class="dropdown-item edit-btn" data-id="@item.Company_Id" href="javascript:void(0);">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
 
                                             </li>
                                             <li>
-                                                <a class="dropdown-item text-danger delete-btn" href="#" data-id="@item.Religion_Id">
+                                                <a class="dropdown-item text-danger delete-btn" href="#" data-id="@item.Company_Id">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </a>
                                             </li>
                                         </ul>
                                     </div>
                                 </td>
-                                <td>@item.Religion_Id</td>
-                                <td>@item.Religion</td>
-                                <td>@item.Religion_L</td>
-                                <td>@item.CreatedBy</td>
-                                <td>@item.ModifiedBy</td>
+                                <td>@item.Company_Id</td>
+                                <td>@item.Company_Name_L</td>
+                                <td>@item.Company_Name_L</td>
+                                <td>@item.ParentCompany</td>
+                                <td>@item.Company_Code</td>
                             </tr>
                         }
                     </tbody>
@@ -125,6 +126,31 @@
 
 <script>
     $(document).ready(function () {
+        $(".edit-btn").click(function () {
+            var companyId = $(this).data("id");
+            var url = "/Company_Master/EditPartial/" + companyId; // Modify the controller path as needed
+
+            // Show loader
+            $(".loader").fadeIn();
+
+            // Load the form into the "new" tab
+            $.get(url, function (data) {
+                $("#newContent").html(data);
+
+                // Switch to the "new" tab
+                $(".tab-content > .tab-pane").removeClass("show active");
+                $("#new").addClass("show active");
+
+                // Hide loader
+                $(".loader").fadeOut();
+            }).fail(function () {
+                Swal.fire("Error", "Failed to load edit form.", "error");
+                $(".loader").fadeOut();
+            });
+        });
+    });
+
+    $(document).ready(function () {
         $("#toggleSearchBtn").click(function () {
             $("#searchPanel").toggleClass("d-none");
             var icon = $(this).find("i");
@@ -148,7 +174,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "/Religion_Master/Delete/" + id,
+                        url: "/Company_Master/Delete/" + id,
                         type: "POST",
                         headers: {
                             "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
@@ -187,7 +213,7 @@
             sessionStorage.setItem("sortOrder_" + column, sortOrder);
 
             $.ajax({
-                url: "/Religion_Master/ListPartial",
+                url: "/Company_Master/ListPartial",
                 type: "GET",
                 data: { sortColumn: column, sortOrder: sortOrder },
                 success: function (response) {
@@ -201,7 +227,7 @@
 
         $("#searchBtn").click(function () {
             $.ajax({
-                url: "/Religion_Master/ListPartial",
+                url: "/Company_Master/ListPartial",
                 type: "GET",
                 data: { searchColumn: $("#searchColumn").val(), searchType: $("#searchType").val(), searchText: $("#searchInput").val().trim() },
                 success: function (response) { $("#listContent").html(response); },
