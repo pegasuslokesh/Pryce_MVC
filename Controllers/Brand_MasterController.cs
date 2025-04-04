@@ -7,20 +7,41 @@ using X.PagedList;
 using X.PagedList.Extensions;
 using X.PagedList.Mvc;
 using System.Linq.Dynamic.Core;
+using Pryce_MVC.Repositories;
 
 namespace Pryce_MVC.Controllers
 {
     public class Brand_MasterController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMenuRepository _menuRepository;
+        private readonly ISPRepository _ISPRepository;
         private readonly ISPService _spService;
+        public Brand_MasterController(ISPRepository ispRepository, ISPService spService)
 
-        public Brand_MasterController(ISPService spService)
         {
+            _ISPRepository = ispRepository;
             _spService = spService;
+            //_logger = logger;
         }
-        public IActionResult Index()
+
+       
+        public async Task<IActionResult> Index(int optype = 1)
         {
+            var masterModules = await _ISPRepository.sp_IT_ModuleMaster_SelectRow(0, null, optype);
+            var objectModules = await _ISPRepository.sp_IT_ObjectEntry_SelectRow(0, null, optype);
+            var moduleObjects = await _ISPRepository.sp_IT_App_Mod_Object_SelectRow(0, 1); // Fetch module-object relationships
+
+            //if (masterModules == null || !masterModules.Any())
+            //    _logger.LogWarning("No modules found from stored procedure.");
+
+            //if (objectModules == null || !objectModules.Any())
+            //    _logger.LogWarning("No objects found from stored procedure.");
+
+
+
+            ViewBag.MasterModules = masterModules; // Store Modules
+            ViewBag.ObjectEntries = objectModules; // Store Objects
+            ViewBag.ModuleObjects = moduleObjects; // Store module-object relationships
             return View();
         }
         public async Task<IActionResult> BrandMaster_ListPartial(int page = 1, int pageSize = 10, string sortColumn = "BrandId", string sortOrder = "asc", string searchColumn = "", string searchType = "", string searchText = "", int optype = 1)

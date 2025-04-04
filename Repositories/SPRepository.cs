@@ -16,6 +16,66 @@ public class SPRepository : ISPRepository
     {
         _context = context;
     }
+    public async Task<IEnumerable<IT_ModuleMaster>> sp_IT_ModuleMaster_SelectRow(int Module_Id, string Module_Name, int optype)
+
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@Module_Id", Module_Id),
+            new SqlParameter("@Module_Name", Module_Name ?? (object)DBNull.Value),
+            new SqlParameter("@Optype", optype)
+        };
+
+        return await _context.IT_ModuleMaster
+            .FromSqlRaw("EXEC sp_IT_ModuleMaster_SelectRow @Module_Id, @Module_Name, @Optype", parameters)
+            .ToListAsync();
+    }
+
+    //adding the function by Mohammed 9:55 
+    public async Task<List<IT_Module_MasterPage>> sp_IT_ModuleMaster_SelectRowNew(int Module_Id, string Module_Name, int optype)
+
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@Module_Id", Module_Id),
+            new SqlParameter("@Module_Name", Module_Name ?? (object)DBNull.Value),
+            new SqlParameter("@Optype", optype)
+        };
+
+        return await _context.IT_Module_MasterPages
+            .FromSqlRaw("EXEC sp_IT_ModuleMaster_SelectRow @Module_Id, @Module_Name, @Optype", parameters)
+            .ToListAsync();
+    }
+
+
+
+    public async Task<IEnumerable<IT_ObjectEntry>> sp_IT_ObjectEntry_SelectRow(int? objectId, string? objectName, int optype)
+
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@objectId", objectId),
+            new SqlParameter("@objectName", objectName ?? (object)DBNull.Value),
+            new SqlParameter("@Optype", optype)
+        };
+
+        return await _context.Set<IT_ObjectEntry>()
+            .FromSqlRaw("EXEC sp_IT_ObjectEntry_SelectRow @objectId, @objectName, @Optype", parameters)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<IT_App_Mod_Object>> sp_IT_App_Mod_Object_SelectRow(int Application_Id, int optype)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@Application_Id", Application_Id),
+        new SqlParameter("@Optype", optype)
+    };
+
+        return await _context.Set<IT_App_Mod_Object>()
+            .FromSqlRaw("EXEC sp_IT_App_Mod_Object_SelectRow @Application_Id, @Optype", parameters)
+            .ToListAsync();
+    }
 
     public async Task<IEnumerable<ReligionMaster>> ExecuteReligionSPAsync(int religionId, string religion, int optype)
     

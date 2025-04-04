@@ -33,6 +33,10 @@ public class SPService : ISPService
     {
         return await _spRepository.DeleteReligionAsync(religionId, isActive, modifiedBy, modifiedDate);
     }
+    public async Task<List<IT_Module_MasterPage>> sp_IT_ModuleMaster_SelectRowNew(int Module_Id, string Module_Name, int optype)
+    {
+        return await _spRepository.sp_IT_ModuleMaster_SelectRowNew(Module_Id, Module_Name, optype);
+    }
     #endregion
     //Repositry form company master 
     //created by jitendra singh rao 29/03/2025

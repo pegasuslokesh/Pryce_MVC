@@ -27,6 +27,12 @@ namespace Pryce_MVC.Data
         public DbSet<State_Master> StateMasters { get; set; }
         public DbSet<Brand_Master> BrandMasters { get; set; }
         public DbSet<Employee_Master> EmployeeMasters { get; set; }
+        public DbSet<IT_ModuleMaster> IT_ModuleMaster { get; set; }
+        public DbSet<IT_ObjectEntry> IT_ObjectEntry { get; set; }
+        public DbSet<IT_App_Mod_Object> IT_App_Mod_Object { get; set; }
+        public DbSet<IT_Module_MasterPage> IT_Module_MasterPages { get; set; }
+
+
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

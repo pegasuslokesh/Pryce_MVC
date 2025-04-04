@@ -16,5 +16,8 @@ namespace Pryce_MVC.Services
         Task<IEnumerable<State_Master>> sp_sys_statemaster_Select(int country_id, int trans_id, bool isActive, int op_type);
         Task<List<Brand_Master>> Sp_getBrandMaster(int Company_Id, int Brand_Id, string Brand_Name, string Company_Ids, int Optype);
         Task<List<Employee_Master>> Set_EmployeeMaster_SelectEmployeeName(int CompanyId, string EmpName);
+        //Task<List<IT_ModuleMaster>> sp_IT_ModuleMaster_SelectRow(int Module_Id, string Module_Name, int optype);
+
+        Task<List<IT_Module_MasterPage>> sp_IT_ModuleMaster_SelectRowNew(int Module_Id, string Module_Name, int optype);
     }
 }

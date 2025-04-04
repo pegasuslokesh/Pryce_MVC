@@ -1,7 +1,7 @@
-﻿@inject Pryce_MVC.Repositories.IMenuRepository _menuRepository
+﻿@inject Pryce_MVC.Repositories.ISPRepository _spRepository
 
 @* @{
-    var masterModules = await _menuRepository.GetMasterModulesAsync();
+    var masterModules = await _spRepository.sp_IT_ModuleMaster_SelectRow(0,null,1);
 } *@
 <!DOCTYPE html>
 <html lang="en">
@@ -821,108 +821,140 @@
                 <a class="dropdown-item" href="auth-logout-basic.html"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
             </div>
         </div>
+
+
+        @*         <div id="scrollbar"> *@
+        @*             <div class="container-fluid"> *@
+        @*                 <div id="two-column-menu"> *@
+        @*                 </div> *@
+
+        @*                 @{ *@
+        @*     var masterModules = ViewData["MasterModules"] as IEnumerable<IT_ModuleMaster>; *@
+        @* } *@
+
+        @* <ul class="navbar-nav"> *@
+        @*     <li class="menu-title"><span data-key="t-menu">Menu</span></li> *@
+        @*     @if (masterModules != null) *@
+        @*     { *@
+        @*         @foreach (var module in masterModules.OrderBy(m => m.Sequence_No)) // Sorting by SequenceNumber *@
+        @*         { *@
+        @*             <li class="nav-item"> *@
+        @*                 <a class="nav-link" href="@module.DashBoard_Url"> *@
+        @*                     <span>@module.Module_Name</span> *@
+        @*                 </a> *@
+        @*             </li> *@
+        @*         } *@
+        @*     } *@
+        @* </ul> *@
+
+        @*             </div> *@
+        @*         </div> *@
+
+        @*         <div class="sidebar-background"></div> *@
+        @*     </div> *@
+        @*     <!-- Left Sidebar End --> *@
+        @*     <div class="vertical-overlay"></div> *@
+
         <div id="scrollbar">
             <div class="container-fluid">
                 <div id="two-column-menu">
                 </div>
-                @* @{
-                    var mainModules = masterModules?.Where(m => m.SubModuleId == null) ?? Enumerable.Empty<Pryce_Master_Module>();
-                } *@
-                @* // this is the final code *@
+
+
+
+                @{
+                    var masterModules = ViewData["MasterModules"] as IEnumerable<IT_ModuleMaster>;
+                    var objectEntries = ViewData["ObjectEntries"] as IEnumerable<IT_ObjectEntry>;
+                    var moduleObjects = ViewData["ModuleObjects"] as IEnumerable<IT_App_Mod_Object>;
+                }
+
                 <ul class="navbar-nav" id="navbar-nav">
                     <li class="menu-title"><span data-key="t-menu">Menu</span></li>
 
-                   @*  @foreach (var module in mainModules)
+                    @foreach (var module in masterModules.Where(x => x.Field1.Equals("0")).OrderBy(m => m.Sequence_No))
                     {
-                        var subModules = masterModules?.Where(m => m.SubModuleId == module.Id) ?? Enumerable.Empty<Pryce_Master_Module>();
+                        var subModules = masterModules?.Where(m => m.Field1 == module.Module_Id.ToString()) ?? Enumerable.Empty<IT_ModuleMaster>();
                         bool hasSubModules = subModules.Any();
-                        bool hasObjectModules = module.ObjectModules?.Any() ?? false;
+                        bool hasObjects = moduleObjects.Any(mo => mo.Module_Id == module.Module_Id);
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="@(hasSubModules || hasObjectModules ? "#" : module.Module_Url)"
-                               data-bs-toggle="collapse" role="button" data-bs-target="#sidebar-@module.Id"
-                               aria-expanded="false" aria-controls="sidebar-@module.Id">
-                                <i class="ri-dashboard-2-line"></i> <!-- Static Icon -->
-                                <span data-key="t-@module.Module_name">@module.Module_name</span>
+                            <a class="nav-link menu-link" href="@(hasSubModules || hasObjects ? "#" : module.DashBoard_Url)"
+                               data-bs-toggle="collapse" role="button" data-bs-target="#sidebar-@module.Module_Id"
+                               aria-expanded="false" aria-controls="sidebar-@module.Module_Id">
+                                @Html.Raw(module.Module_Image)
+                                <span data-key="t-@module.Module_Name">@module.Module_Name</span>
                             </a>
 
-                            @if (hasSubModules || hasObjectModules)
+                            @if (hasSubModules || hasObjects)
                             {
-                                <div class="collapse menu-dropdown" id="sidebar-@module.Id">
+                                <div class="collapse menu-dropdown" id="sidebar-@module.Module_Id">
                                     <ul class="nav nav-sm flex-column">
-
-                                        @* Object Modules (Before Submodules) *@
-                                     @*    @if (hasObjectModules)
+                                        @foreach (var submodule in subModules.OrderBy(sm => sm.Sequence_No))
                                         {
-                                            @foreach (var objectModule in module.ObjectModules)
-                                            {
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="@objectModule.ObjectModule_Url">
-                                                        @objectModule.ObjectModule_name
-                                                    </a>
-                                                </li>
-                                            }
-                                        } *@
-
-                                        @* Submodules *@
-                                      @*   @foreach (var submodule in subModules)
-                                        {
-                                            var nestedSubModules = masterModules?.Where(m => m.SubModuleId == submodule.Id) ?? Enumerable.Empty<Pryce_Master_Module>();
+                                            var nestedSubModules = masterModules?.Where(m => m.Field1 == submodule.Module_Id.ToString()) ?? Enumerable.Empty<IT_ModuleMaster>();
                                             bool hasNestedSubModules = nestedSubModules.Any();
-                                            bool hasSubObjectModules = submodule.ObjectModules?.Any() ?? false;
+                                            bool hasSubmoduleObjects = moduleObjects.Any(mo => mo.Module_Id == submodule.Module_Id);
 
                                             <li class="nav-item">
-                                                <a class="nav-link menu-link" href="@(hasNestedSubModules || hasSubObjectModules ? "#" : submodule.Module_Url)"
-                                                   data-bs-toggle="collapse" role="button" data-bs-target="#sidebar-@submodule.Id"
-                                                   aria-expanded="false" aria-controls="sidebar-@submodule.Id">
-                                                    <span data-key="t-@submodule.Module_name">@submodule.Module_name</span>
+                                                <a class="nav-link menu-link" href="@(hasNestedSubModules || hasSubmoduleObjects ? "#" : submodule.DashBoard_Url)"
+                                                   data-bs-toggle="collapse" role="button" data-bs-target="#sidebar-@submodule.Module_Id"
+                                                   aria-expanded="false" aria-controls="sidebar-@submodule.Module_Id">
+                                                    @Html.Raw(submodule.Module_Image)
+                                                    <span data-key="t-@submodule.Module_Name">@submodule.Module_Name</span>
                                                 </a>
 
-                                                @if (hasNestedSubModules || hasSubObjectModules)
+                                                @if (hasNestedSubModules || hasSubmoduleObjects)
                                                 {
-                                                    <div class="collapse menu-dropdown" id="sidebar-@submodule.Id">
+                                                    <div class="collapse menu-dropdown" id="sidebar-@submodule.Module_Id">
                                                         <ul class="nav nav-sm flex-column">
-
-                                                            @* Object Modules of Submodule *@
-                                                         @*    @if (hasSubObjectModules)
-                                                            {
-                                                                @foreach (var objectModule in submodule.ObjectModules)
-                                                                {
-                                                                    <li class="nav-item">
-                                                                        <a class="nav-link" href="@objectModule.ObjectModule_Url">
-                                                                            @objectModule.ObjectModule_name
-                                                                        </a>
-                                                                    </li>
-                                                                }
-                                                            } *@
-
-                                                            @* Nested Submodules *@
-                                                      @*       @foreach (var nestedSubmodule in nestedSubModules)
+                                                            @foreach (var nestedSubmodule in nestedSubModules.OrderBy(nsm => nsm.Sequence_No))
                                                             {
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link" href="@nestedSubmodule.Module_Url">
-                                                                        @nestedSubmodule.Module_name
+                                                                    <a class="nav-link" href="@nestedSubmodule.DashBoard_Url">
+                                                                        @nestedSubmodule.Module_Name
                                                                     </a>
                                                                 </li>
-                                                            } *@
+                                                            }
+
+                                                            @foreach (var obj in objectEntries
+                                                           .Where(o => moduleObjects.Any(mo => mo.Module_Id == submodule.Module_Id && mo.Object_Id == o.Object_Id && o.ShowInNavigationMenu == true))
+                                                           .OrderBy(o => o.Order_Appear))
+                                                            {
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="@obj.Page_Url">
+                                                                        @obj.Object_Name
+                                                                    </a>
+                                                                </li>
+                                                            }
                                                         </ul>
                                                     </div>
                                                 }
                                             </li>
-                                   
+                                        }
+
+                                        @foreach (var obj in objectEntries
+                                       .Where(o => moduleObjects.Any(mo => mo.Module_Id == module.Module_Id && mo.Object_Id == o.Object_Id && o.ShowInNavigationMenu == true))
+                                       .OrderBy(o => o.Order_Appear ?? int.MaxValue))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="@obj.Page_Url">
+                                                    @obj.Object_Name
+                                                </a>
+                                            </li>
+                                        }
                                     </ul>
                                 </div>
                             }
                         </li>
-                  
+                    }
                 </ul>
+
 
             </div>
         </div>
 
         <div class="sidebar-background"></div>
-    </div>
-    <!-- Left Sidebar End -->
+    </div> <!-- End of #scrollbar -->
     <div class="vertical-overlay"></div>
 
 

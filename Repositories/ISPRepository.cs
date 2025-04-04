@@ -4,6 +4,10 @@ namespace Pryce_MVC.Repositories
 {
     public interface ISPRepository
     {
+        Task<IEnumerable<IT_ObjectEntry>> sp_IT_ObjectEntry_SelectRow(int? objectId, string? objectName, int optype);
+        Task<IEnumerable<IT_ModuleMaster>> sp_IT_ModuleMaster_SelectRow(int Application_Id, string Application_Name, int optype);
+        Task<IEnumerable<IT_App_Mod_Object>> sp_IT_App_Mod_Object_SelectRow(int Application_Id, int optype);
+        Task<List<IT_Module_MasterPage>> sp_IT_ModuleMaster_SelectRowNew(int Module_Id, string Module_Name, int optype);
         Task<IEnumerable<ReligionMaster>> ExecuteReligionSPAsync(int religionId, string religion, int optype);
         Task<int> InsertReligionAsync(string religion, string religionL, DateTime created_Date );
         Task<int> UpdateReligionAsync(int religionId, string religion, string religionL);
