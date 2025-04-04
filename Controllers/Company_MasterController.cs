@@ -92,11 +92,54 @@ namespace Pryce_MVC.Controllers
             ViewBag.CompanyList = companyMasters;
             var CourrncyName = await _spService.ExecuteCurrencySPAsync(0, null, 6);
             ViewBag.CurrencyList = CourrncyName;
-            var AddressList = await _spService.ExecuteCurrencySPAsync(0, null, 6);
+            var AddressList = await _spService.sp_Set_AddressCategory_SelectRow(0, null, 2);
+            ViewBag.AddressList = AddressList;
             ViewBag.CurrencyList = CourrncyName;
+            var CountryList = await _spService.ExecuteCountrySPAsync(0, null, 1);
+            ViewBag.CountryList = CountryList;
+            //var MainAddressList = await _spService.sp_Set_AddressMaster_SelectRow(0,0 ,null, 1);
+            //ViewBag.MainAddressList = MainAddressList;
             return PartialView("_NewPartial");
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAddressNameAll(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                return Json(new { success = false, message = "Invalid search term" });
+            }
+            // int optype = 7;
 
+
+            // Fetch all companies first
+            var MainAddressList = await _spService.sp_Set_AddressMaster_SelectRow(0, 0, null, 1);
+
+            // Filter AddressName where name starts with 'term'
+            var filteredCompanies = _context.AddressMasters
+                .Where(c => c.Address_Name.StartsWith(term, StringComparison.OrdinalIgnoreCase))
+                .Select(c => new { label = c.Address_Name, value = c.Address_Name })
+                .ToList();
+
+            return Json(filteredCompanies);
+        }
+
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAddressUsingCountryId(int Countryid)
+        {
+            if (Countryid == 0)
+            {
+                return Json(new List<object>()); // Return empty if no country selected
+            }
+
+            var MainAddressList = await _spService.sp_sys_statemaster_Select(Countryid, 0, true, 1);
+
+            var filteredStates = MainAddressList
+                .Select(c => new { label = c.State_Name, value = c.State_Name })
+                .ToList();
+
+            return Json(filteredStates);
+        }
 
         [HttpPost]
             public async Task<IActionResult> InsertReligion(ReligionMaster model)

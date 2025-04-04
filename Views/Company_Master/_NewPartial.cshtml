@@ -6,24 +6,24 @@
 }
 <style>
     .ui-autocomplete {
-        z-index: 1100 !important;
-        background-color: white;
-        border: 1px solid #ddd;
-        max-height: 200px;
+        z-index: 100000 !important; /* Ensure it's above modal/dialog */
+        max-height: 200px; /* Prevent hidden results */
         overflow-y: auto;
+        overflow-x: hidden;
     }
+
 
     .modal-dialog {
         max-width: 1400px !important;
-        
         padding-left: 300px;
     }
 
     .modal {
         display: flex;
-        justify-content: flex-end; /* Align to the right */
-        align-items: center; /* Center vertically */
+        justify-content: flex-end;
+        align-items: center;
     }
+
     .modal-content {
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -136,8 +136,15 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Country Name *</label>
-                        <select asp-for="Country_Id" class="form-select" required>
+                        <select id="CountryDropdown" asp-for="Country_Id" class="form-select" required>
                             <option value="1">India</option>
+                            @if (ViewBag.CountryList != null)
+                            {
+                                foreach (var company in (List<Pryce_MVC.Models.Country_Master>)ViewBag.CountryList)
+                                {
+                                    <option value="@company.Country_Id">@company.Country_Name</option>
+                                }
+                            }
                         </select>
                     </div>
 
@@ -193,13 +200,14 @@
                     <button type="submit" class="btn btn-success btn-sm px-4 fw-bold">Next</button>
                 </div>
             </div>
+          
         </form>
     </div>
     <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header custom-header">
-                    <i class="fas fa-envelope-open-text"></i>  <h5 class="modal-title">New Address</h5>
+                    <i class="fas fa-envelope-open-text"></i> <h5 class="modal-title">New Address</h5>
                     <button class="btn btn-sm btn-light new-button">New</button>
                 </div>
                 <div class="modal-body">
@@ -207,16 +215,19 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label>Address Category *</label>
-                                <select class="form-select">
-                                    <option value="">--Select--</option>
-                                    <option value="home">Home</option>
-                                    <option value="office">Office</option>
-                                    <option value="other">Other</option>
+                                <select id="AddressCategoryDropdown" class="form-select">
+                                    @if (ViewBag.AddressList != null)
+                                    {
+                                        foreach (var company in (List<Pryce_MVC.Models.Set_AddressCategory>)ViewBag.AddressList)
+                                        {
+                                            <option value="@company.Address_Name">@company.Address_Name</option>
+                                        }
+                                    }
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label>Address Name *</label>
-                                <input type="text" class="form-control">
+                                <input id="AddressName" class="form-control border-1" required />
                             </div>
                         </div>
                         <div class="mb-3">
@@ -226,15 +237,19 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label>Country</label>
-                                <select class="form-select">
-                                    <option>India</option>
-                                    <option>USA</option>
-                                    <option>Canada</option>
+                                <select id="ModalCountryDropdown" class="form-select">
+                                    @if (ViewBag.CountryList != null)
+                                    {
+                                        foreach (var company in (List<Pryce_MVC.Models.Country_Master>)ViewBag.CountryList)
+                                        {
+                                            <option value="@company.Country_Id">@company.Country_Name</option>
+                                        }
+                                    }
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label>State</label>
-                                <input type="text" class="form-control">
+                                <input id="StateNameid" type="text" class="form-control border-1">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label>City</label>
@@ -253,117 +268,81 @@
                             <label>Additional Information</label>
                             <button type="button" class="btn btn-sm btn-light add-button" id="toggleAdditionalInfo">+</button>
                         </div>
-                       @*  <div id="additionalInfoFields" style="display: none;">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label>Street No.</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Block</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Avenue</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Alternate Email</label>
-                                    <input type="email" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Website</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Longitude</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Latitude</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <button type="button" class="btn btn-primary">Set Value</button>
-                                    <button type="button" class="btn btn-info">Map</button>
-                                </div> *@
-                            @* </div> *@
-                            <div class="mb-3">
-                                <label>Contact Type</label>
-                                <select id="contactType" class="form-select">
-                                    <option value="mobile">Mobile</option>
-                                    <option value="phone">Phone</option>
-                                </select>
+                        <div class="mb-3">
+                            <label>Contact Type</label>
+                            <select id="contactType" class="form-select">
+                                <option value="mobile">Mobile</option>
+                                <option value="phone">Phone</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label>Country Code</label>
+                                <input type="text" id="countryCode" class="form-control" value="+91" />
                             </div>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label>Country Code</label>
-                                    <input type="text" id="countryCode" class="form-control" value="+91" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Number</label>
-                                    <input type="text" id="phoneNumber" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Extension No.</label>
-                                    <input type="text" id="extensionNo" class="form-control" />
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <button type="button" class="btn btn-success" id="addNumber">Add Number</button>
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Number</label>
+                                <input type="text" id="phoneNumber" class="form-control" />
                             </div>
-                            <div class="mb-3">
-                                <label>Added Number List</label>
-                                <button type="button" class="btn btn-sm btn-light toggle-container" id="toggleNumberList">+</button>
-                                <table class="table table-bordered" id="addedNumberTable" style="display: none;">
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Code</th>
-                                            <th>Number</th>
-                                            <th>Is Default</th>
-                                            <th>Extension</th>
-                                            
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="addedNumberList">
-                                    </tbody>
-                                </table>
+                            <div class="col-md-4 mb-3">
+                                <label>Extension No.</label>
+                                <input type="text" id="extensionNo" class="form-control" />
                             </div>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label>Street No.</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Block</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Avenue</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Alternate Email</label>
-                                    <input type="email" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Website</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Longitude</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label>Latitude</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <button type="button" class="btn btn-primary">Set Value</button>
-                                    <button type="button" class="btn btn-info">Map</button>
-                                </div>
+                            <div class="col-md-12 mb-3">
+                                <button type="button" class="btn btn-success" id="addNumber">Add Number</button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Added Number List</label>
+                            <button type="button" class="btn btn-sm btn-light toggle-container" id="toggleNumberList">+</button>
+                            <table class="table table-bordered" id="addedNumberTable" style="display: none;">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Code</th>
+                                        <th>Number</th>
+                                        <th>Is Default</th>
+                                        <th>Extension</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="addedNumberList">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label>Street No.</label>
+                                <input type="text" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Block</label>
+                                <input type="text" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Avenue</label>
+                                <input type="text" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Alternate Email</label>
+                                <input type="email" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Website</label>
+                                <input type="text" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Longitude</label>
+                                <input type="text" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Latitude</label>
+                                <input type="text" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <button type="button" class="btn btn-primary">Set Value</button>
+                                <button type="button" class="btn btn-info">Map</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -375,62 +354,66 @@
             </div>
         </div>
     </div>
-
-   
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
     $(document).ready(function () {
-        console.log("Autocomplete script loaded!");
-
         $(".btn-info").click(function () {
             if ($("#addressModal").length > 0) {
-                console.log("Opening modal...");
                 $("#addressModal").modal("show");
             } else {
                 console.error("Modal element not found!");
             }
         });
+
         $("#toggleNumberList").click(function () {
             $("#addedNumberTable").toggle();
             $(this).text($(this).text() === '+' ? '-' : '+');
         });
+
         $("#CompanyName").autocomplete({
             source: function (request, response) {
-                console.log("🔍 Searching for:", request.term);
-
                 $.ajax({
                     url: '@Url.Action("GetCompanyNames", "Company_Master")',
                     type: "GET",
                     dataType: "json",
                     data: { term: request.term },
                     success: function (data) {
-                        console.log("✅ Received data from server:", data);
-
-                        if (data.length === 0) {
-                            console.warn("⚠️ No matching companies found!");
-                        }
-
                         response(data);
                     },
                     error: function (xhr, status, error) {
-                        console.error("❌ AJAX Error:", status, error);
+                        console.error("AJAX Error:", status, error);
                     }
                 });
             },
             minLength: 1,
             select: function (event, ui) {
-                console.log("✅ Selected:", ui.item.value);
                 $("#CompanyName").val(ui.item.value);
+            }
+        });
+
+        $("#AddressName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetAddressNameAll", "Company_Master")',
+                    type: "GET",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", status, error);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                $("#AddressName").val(ui.item.value);
             }
         });
 
@@ -445,7 +428,7 @@
             }
         });
 
-        let numbers = []; // Array to store added numbers
+        let numbers = [];
 
         $("#addNumber").click(function () {
             const type = $("#contactType").val();
@@ -453,34 +436,30 @@
             const number = $("#phoneNumber").val();
             const extension = $("#extensionNo").val();
             if (number.trim() !== "") {
-                // Add the number
                 numbers.push({ type, code, number, extension });
                 updateNumberList();
             } else {
-                alert("Number cannot be empty."); // Optionally, show an alert
+                alert("Number cannot be empty.");
             }
-
         });
 
         function updateNumberList() {
             const list = $("#addedNumberList");
-            list.empty(); // Clear existing list
-
+            list.empty();
             if (numbers.length > 0) {
                 $("#addedNumberTable").show();
                 $("#toggleNumberList").show();
                 numbers.forEach((item, index) => {
                     list.append(`
-                                    <tr>
-                                        <td>${item.type}</td>
-                                        <td>${item.code}</td>
-                                        <td>${item.number}</td>
-                                        <td><input type="checkbox" /></td>
-                                        <td>${item.extension}</td>
-                                       
-                                        <td><button type="button" class="btn btn-danger btn-sm removeNumber" data-index="${index}">X</button></td>
-                                    </tr>
-                                `);
+                            <tr>
+                                <td>${item.type}</td>
+                                <td>${item.code}</td>
+                                <td>${item.number}</td>
+                                <td><input type="checkbox" /></td>
+                                <td>${item.extension}</td>
+                                <td><button type="button" class="btn btn-danger btn-sm removeNumber" data-index="${index}">X</button></td>
+                            </tr>
+                        `);
                 });
             } else {
                 $("#addedNumberTable").hide();
@@ -490,13 +469,104 @@
 
         $(document).on("click", ".removeNumber", function () {
             const index = $(this).data("index");
-            numbers.splice(index, 1); // Remove from array
+            numbers.splice(index, 1);
             updateNumberList();
         });
 
         $("#toggleAdditionalInfo").click(function () {
             $("#additionalInfoFields").toggle();
             $(this).text($(this).text() === '+' ? '-' : '+');
+         });
+        // $("#StateName").autocomplete({
+            
+        //     source: [
+        //         { label: "Test State 1", value: "Test State 1" },
+        //         { label: "Test State 2", value: "Test State 2" },
+        //         { label: "Test State 3", value: "Test State 3" }
+        //     ],
+        //     minLength: 0,
+        //     select: function (event, ui) {
+        //         $("#StateName").val(ui.item.value);
+        //     }
+        // });
+
+        $(document).ready(function () {
+            $("#StateNameid").autocomplete({
+                source: function (request, response) {
+                    var countryId = $("#ModalCountryDropdown").val();
+                    $.ajax({
+                        url: '@Url.Action("GetAddressUsingCountryId", "Company_Master")',
+                        type: "GET",
+                        dataType: "json",
+                        data: { Countryid: countryId },
+                        success: function (data) {
+                            if (Array.isArray(data) && data.length > 0) {
+                                response(data);
+                            } else {
+                                response([{ label: "No results found", value: "" }]);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX Error:", status, error);
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, ui) {
+                    if (ui.item.value) {
+                        $("#StateNameid").val(ui.item.value);
+                    }
+                }
+            });
         });
+        // $("#StateNameid").autocomplete({
+        //     source: function (request, response) {
+        //         console.log("Autocomplete triggered");
+        //         var countryId = $("#ModalCountryDropdown").val();
+        //         console.log("Country ID:", countryId);
+
+        //         if (countryId) {
+        //             $.ajax({
+        //                 url: '@Url.Action("GetAddressUsingCountryId", "Company_Master")',
+        //                 type: "GET",
+        //                 dataType: "json",
+        //                 data: { Countryid: countryId, term: request.term },
+        //                 success: function (data) {
+        //                     console.log("Received Data:", data);
+        //                     console.log("data type: ", typeof data);
+        //                     console.log("data length: ", data.length);
+
+        //                     if (Array.isArray(data)) {
+        //                         response($.map(data, function (item) {
+        //                             if (item && item.label && item.value) {
+        //                                 return { label: item.label, value: item.value };
+        //                             } else {
+        //                                 console.warn("Invalid item in data:", item);
+        //                                 return null;
+        //                             }
+        //                         }));
+        //                     } else {
+        //                         console.error("Data received is not an array:", data);
+        //                         response([]);
+        //                     }
+        //                 },
+        //                 error: function (xhr, status, error) {
+        //                     console.error("AJAX Error:", status, error);
+        //                 }
+        //             });
+        //         }
+        //     },
+        //     minLength: 0,
+        //     select: function (event, ui) {
+        //         $("#StateNameid").val(ui.item.value);
+        //     },
+        //     open: function () { // Add this open event
+        //         $(this).autocomplete("widget").appendTo("body");
+        //     },
+        //     position: { my: "left top", at: "left bottom", of: "#StateNameid" } // Add this position event
+        // });
+
+
+
     });
 </script>

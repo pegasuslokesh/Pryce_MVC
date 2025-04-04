@@ -22,6 +22,11 @@ namespace Pryce_MVC.Data
         public DbSet<Company_Master> CompanyMasters { get; set; }
         public DbSet<Company_Limited> CompanyLimiteds { get; set; }
         public DbSet<Currency_Master> CurrencyMasters { get; set; }
+        public DbSet<Set_AddressCategory> AddressCategorys { get; set; }
+        public DbSet<Address_Master> AddressMasters { get; set; }
+        public DbSet<State_Master> StateMasters { get; set; }
+        public DbSet<Brand_Master> BrandMasters { get; set; }
+        public DbSet<Employee_Master> EmployeeMasters { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

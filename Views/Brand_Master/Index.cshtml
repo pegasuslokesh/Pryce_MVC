@@ -1,0 +1,169 @@
+﻿@* @model IEnumerable<Pryce_MVC.Models.ReligionMaster> *@
+
+@{
+    ViewData["Title"] = "Brand Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    .content-wrapper {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+
+    .content-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 80px;
+        margin-left: 250px;
+    }
+
+    .tab-container {
+        flex-shrink: 0;
+    }
+
+    .tab-content {
+        margin-left: 250px;
+        padding-left: 20px;
+        margin-right: auto;
+    }
+
+    .action-icons a {
+        font-size: 18px;
+        margin-right: 10px;
+    }
+
+    /* ✅ Loader Styles */
+    .loader {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 999;
+    }
+
+    .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+@await Html.PartialAsync("~/Views/Religion_Master/_Tabs.cshtml")
+
+
+<!-- ✅ Loader -->
+<div class="loader">
+    <div class="spinner"></div>
+</div>
+
+<!-- ✅ Tab Content -->
+<div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="list">
+        <div id="listContent">
+            @* List content will be loaded here via JavaScript *@
+        </div>
+    </div>
+    <div class="tab-pane fade" id="new">
+        <div id="newContent">
+            @* New/Edit form content will be loaded here via JavaScript *@
+        </div>
+    </div>
+    <div class="tab-pane fade" id="inactive">
+        <div id="inactiveContent">
+            @* Inactive records content will be loaded here via JavaScript *@
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var isListLoaded = false; // ✅ Prevent multiple loads
+
+            // ✅ Ensure "list" tab is active by default
+            $(".tab-content > .tab-pane").removeClass("show active");
+            $("#list").addClass("show active");
+
+            // ✅ Function to Show/Hide Loader
+            function showLoader() {
+                $(".loader").fadeIn();
+            }
+
+            function hideLoader() {
+                $(".loader").fadeOut();
+            }
+
+            // ✅ Load List Tab Only Once
+            function loadListTab() {
+                if (!isListLoaded) {
+                    isListLoaded = true; // ✅ Set flag to prevent reloading
+                    showLoader(); // ✅ Show loader while fetching data
+
+                    $.ajax({
+                        url: '/Brand_Master/BrandMaster_ListPartial',
+                        type: 'GET',
+                        success: function (data) {
+                            $("#listContent").html(data);
+                            hideLoader(); // ✅ Hide loader after content loads
+                        },
+                        error: function () {
+                            Swal.fire("Error", "Failed to load data.", "error");
+                            hideLoader(); // ✅ Hide loader on error
+                        }
+                    });
+                }
+            }
+
+            // ✅ Load list tab on first load
+            loadListTab();
+
+            // ✅ Tab Click Handlers
+            $("#list-tab").click(function () {
+                loadListTab(); // ✅ Load only if not loaded
+            });
+
+            $("#new-tab").click(function () {
+                loadTabContent("new", "/Brand_Master/InsertReligion");
+            });
+
+            $("#inactive-tab").click(function () {
+                // loadTabContent("inactive", "/Company_Master/InactivePartial");
+            });
+
+            // ✅ Function to Load Tab Content (Avoid Reloading List Tab)
+            function loadTabContent(tabId, url) {
+                debugger;
+                if (tabId === "list" && isListLoaded) return; // ✅ Prevent list reloading
+
+                $(".tab-content > .tab-pane").removeClass("show active"); // Hide all tabs
+                $("#" + tabId).addClass("show active"); // Show selected tab
+
+                showLoader(); // ✅ Show loader while fetching data
+
+                $.get(url, function (data) {
+                    $("#" + tabId + "Content").html(data);
+                    hideLoader(); // ✅ Hide loader after content loads
+                }).fail(function () {
+                    Swal.fire("Error", "Failed to load data.", "error");
+                    hideLoader(); // ✅ Hide loader on error
+                });
+            }
+        });
+    </script>
+}

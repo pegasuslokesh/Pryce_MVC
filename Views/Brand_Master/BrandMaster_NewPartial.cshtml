@@ -1,0 +1,443 @@
+﻿@model Pryce_MVC.Models.Brand_Master
+
+@{
+    var isEdit = Model?.Brand_Id > 0;
+    ViewData["Title"] = isEdit ? "Edit Company" : "Create New Company";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 1000px;
+        border-radius: 8px;
+    }
+
+    h6 {
+        text-align: center;
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+
+    input[type="text"], input[type="email"], input[type="file"], select, textarea {
+        width: 100%;
+        padding: 8px 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        box-sizing: border-box;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+    }
+
+    .col-md-6, .col-md-4, .col-md-12 {
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+
+    .col-md-6 {
+        width: 50%;
+    }
+
+    .col-md-4 {
+        width: 33.333%;
+    }
+
+    .col-md-12 {
+        width: 100%;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin: 5px;
+    }
+
+    .btn-primary {
+        background-color: #2962FF;
+        color: white;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    /* Modal */
+    .custom-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .custom-modal-content {
+        background-color: #fff;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 1000px;
+    }
+
+    .custom-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(to right, #2962FF, #2979FF);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .custom-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .close-btn {
+        cursor: pointer;
+        font-size: 20px;
+        background: none;
+        border: none;
+        color: white;
+    }
+
+    .hidden-section {
+        display: none;
+    }
+
+    .toggle-btn {
+        padding: 5px 10px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            text-align: left;
+        }
+</style>
+
+<div class="form-container">
+    <h6>@ViewData["Title"]</h6>
+    <form asp-action="@(isEdit ? "EditPartial" : "InsertCompany")" method="post" enctype="multipart/form-data">
+        @if (isEdit)
+        {
+            <input type="hidden" asp-for="Brand_Id" />
+        }
+
+        <div class="row">
+            <div class="col-md-6">
+                <label>Brand Code *</label>
+                <input asp-for="Brand_Code" required />
+
+                <label>Brand Name *</label>
+                <input id="Brand_Name" asp-for="Brand_Name" required />
+
+                <label>Brand Name (Local)</label>
+                <input asp-for="Brand_Name_L" />
+
+                <label>Manager</label>
+                <input type="text" id="ManagerName" autocomplete="off" />
+                <input type="hidden" asp-for="Emp_Id" id="EmpId" />
+
+                <label>Address Name</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" />
+                    <button type="button" class="btn btn-primary" id="openModal">+</button>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="text-center">Brand Logo</label>
+                <div style="border: 1px solid #ddd; padding: 20px; text-align: center; background-color: #f8f9fa;">
+                    <img id="logoPreview" src="~/images/no-image.png" alt="No Image Available" style="max-height: 150px;" />
+                </div>
+                <input type="file" id="fileInput" name="file" class="hidden" accept="image/*" />
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click();">File Manager</button>
+            </div>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-md-12">
+                <button type="reset" class="btn btn-secondary">Reset</button>
+                <button type="button" class="btn btn-danger" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn btn-success">Next</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="custom-modal" id="addressModal">
+    <div class="custom-modal-content">
+        <div class="custom-modal-header">
+            <i class="fas fa-envelope-open-text"></i> <h5 class="modal-title">New Address</h5>
+            <button class="btn btn-sm btn-light new-button">New</button>
+        </div>
+        <div class="modal-body">
+            <form id="addressForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Address Category *</label>
+                        <select id="AddressCategoryDropdown" class="form-select">
+                            @if (ViewBag.AddressList != null)
+                            {
+                                foreach (var company in (List<Pryce_MVC.Models.Set_AddressCategory>)ViewBag.AddressList)
+                                {
+                                    <option value="@company.Address_Name">@company.Address_Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Address Name *</label>
+                        <input id="AddressName" class="form-control border-1" required />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label>Address *</label>
+                    <textarea class="form-control"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label>Country</label>
+                        <select id="ModalCountryDropdown" class="form-select">
+                            @if (ViewBag.CountryList != null)
+                            {
+                                foreach (var company in (List<Pryce_MVC.Models.Country_Master>)ViewBag.CountryList)
+                                {
+                                    <option value="@company.Country_Id">@company.Country_Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>State</label>
+                        <input id="StateNameid" type="text" class="form-control border-1">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>City</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>PinCode</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>Email</label>
+                        <input type="email" class="form-control">
+                    </div>
+                </div>
+                <div class="additional-info">
+                    <label>Additional Information</label>
+                    <button type="button" class="btn btn-sm btn-light add-button" id="toggleAdditionalInfo">+</button>
+                </div>
+                <div id="additionalInfoSection" class="hidden-section">
+                    <div class="mb-3">
+                        <label>Contact Type</label>
+                        <select id="contactType" class="form-select">
+                            <option value="mobile">Mobile</option>
+                            <option value="phone">Phone</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Country Code</label>
+                            <input type="text" id="countryCode" class="form-control" value="+91" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Number</label>
+                            <input type="text" id="phoneNumber" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Extension No.</label>
+                            <input type="text" id="extensionNo" class="form-control" />
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <button type="button" class="btn btn-success" id="addNumber">Add Number</button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Added Number List</label>
+                        <button type="button" class="btn btn-sm btn-light toggle-container" id="toggleNumberList">+</button>
+                        <table class="table table-bordered" id="addedNumberTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Code</th>
+                                    <th>Number</th>
+                                    <th>Is Default</th>
+                                    <th>Extension</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="addedNumberList">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Street No.</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Block</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Avenue</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Alternate Email</label>
+                            <input type="email" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Website</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Longitude</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Latitude</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <button type="button" class="btn btn-primary">Set Value</button>
+                            <button type="button" class="btn btn-info">Map</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="btn btn-success" id="saveAddress">Save</button>
+            <button type="button" class="btn btn-light reset-button">Reset</button>
+            <button type="button" class="btn btn-danger close-btn">Close</button>
+        </div>
+    </div>
+</div>
+
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> 
+<script>
+    $(document).ready(function () {
+        $("#openModal").click(function () {
+            $("#addressModal").show();
+
+            $("#StateNameid").autocomplete({
+                source: function (request, response) {
+                    var countryId = $("#ModalCountryDropdown").val();
+                    $.ajax({
+                        url: '@Url.Action("GetAddressUsingCountryId", "Brand_Master")',
+                        type: "GET",
+                        dataType: "json",
+                        data: {
+                            Countryid: countryId,
+                            
+                        },
+                        success: function (data) {
+                            console.log("Returned data:", data);
+                            if (Array.isArray(data) && data.length > 0) {
+                                response($.map(data, function (item) {
+                                    return {
+                                        label: item.label,
+                                        value: item.value
+                                    };
+                                }));
+                            } else {
+                                response([{ label: "No results found", value: "" }]);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX Error:", status, error);
+                        }
+                    });
+                },
+                minLength: 1,
+                appendTo: "#addressModal .modal-body",
+                select: function (event, ui) {
+                    $("#StateNameid").val(ui.item.value);
+                    return false;
+                },
+                focus: function (event, ui) {
+                    $("#StateNameid").val(ui.item.label);
+                    return false;
+                }
+            });
+        });
+
+
+        $(".close-btn").click(function () {
+            $("#addressModal").hide();
+        });
+
+        $("#toggleAdditionalInfo").click(function () {
+            $("#additionalInfoSection").toggle();
+            $(this).text($(this).text() === '+' ? '-' : '+');
+        });
+
+        $("#toggleNumberList").click(function () {
+            $("#addedNumberTable").toggle();
+            $(this).text($(this).text() === '+' ? '-' : '+');
+        });
+
+      
+    });
+</script>

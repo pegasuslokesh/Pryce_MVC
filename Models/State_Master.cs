@@ -3,17 +3,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Pryce_MVC.Models
 {
-    public class Set_AddressCategory
+    public class State_Master
     {
         [Key]
        
-        public int Address_Category_Id { get; set; }
+        public int Trans_Id { get; set; }
 
-        [MaxLength(255)]
-        public string Address_Name { get; set; }
+        [Required]
+        public int Country_Id { get; set; }
 
-        [MaxLength(255)]
-        public string Address_Name_L { get; set; }
+        [MaxLength(250)]
+        public string State_Name { get; set; }
+
+        [MaxLength(250)]
+        public string State_Name_Local { get; set; }
 
         [MaxLength(255)]
         public string Field1 { get; set; }
@@ -24,16 +27,7 @@ namespace Pryce_MVC.Models
         [MaxLength(255)]
         public string Field3 { get; set; }
 
-        [MaxLength(255)]
-        public string Field4 { get; set; }
-
-        [MaxLength(255)]
-        public string Field5 { get; set; }
-
-        public bool? Field6 { get; set; }
-
-        public DateTime? Field7 { get; set; }
-
+        [Required]
         public bool IsActive { get; set; }
 
         [Required]
@@ -49,6 +43,6 @@ namespace Pryce_MVC.Models
 
         [Required]
         public DateTime ModifiedDate { get; set; }
-        
+        public string Country_Name { get; set; }
     }
 }

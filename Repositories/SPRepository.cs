@@ -212,6 +212,116 @@ public class SPRepository : ISPRepository
             .FromSqlRaw("EXEC sp_Sys_CurrencyMaster_SelectRow @Currency_Id, @Currency_Name, @Optype", parameters)
             .ToListAsync();
     }
+    //Get AddressCategory form sp.Writen by jitendra singh rao 
+    public async Task<IEnumerable<Set_AddressCategory>> sp_Set_AddressCategory_SelectRow(int AddressCategoryID, string AddressName, int optype)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@AddressCategoryID", AddressCategoryID),
+        new SqlParameter("@AddressName", AddressName ?? (object)DBNull.Value),
+        new SqlParameter("@Optype", optype)
+    };
+
+        return await _context.AddressCategorys
+            .FromSqlRaw("EXEC sp_Set_AddressCategory_SelectRow @AddressCategoryID, @AddressName, @Optype", parameters)
+            .ToListAsync();
+    }
+    public async Task<IEnumerable<Address_Master>> sp_Set_AddressMaster_SelectRow(
+    int Trans_Id, int Address_Category_Id, string Address_Name = null, int optype = 1)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@Trans_Id", Trans_Id),
+        new SqlParameter("@Address_Category_Id", Address_Category_Id),
+        new SqlParameter("@Address_Name", Address_Name ?? (object)DBNull.Value),
+        new SqlParameter("@Optype", optype)
+    };
+
+        var result = await _context.AddressMasters
+            .FromSqlRaw("EXEC sp_Set_AddressMaster_SelectRow @Trans_Id, @Address_Category_Id, @Address_Name, @Optype", parameters)
+            .ToListAsync();
+
+        // ✅ Ensure no NULL errors
+        return result.Select(r => new Address_Master
+        {
+            Trans_Id = r.Trans_Id,
+            Address_Category_Id = r.Address_Category_Id,
+            Address_Name = r.Address_Name ?? string.Empty // Handle NULL values
+        }).ToList();
+    }
+    //This sp for country select country 
+    public async Task<IEnumerable<Country_Master>> ExecuteCountrySPAsync(int Country_Id, string Country_Name, int optype)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@Country_Id", Country_Id),
+        new SqlParameter("@Country_Name", Country_Name ?? (object)DBNull.Value),
+        new SqlParameter("@Optype", optype)
+    };
+
+        return await _context.Country_Master
+            .FromSqlRaw("EXEC sp_Sys_CountryMaster_SelectRow @Country_Id, @Country_Name, @Optype", parameters)
+            .ToListAsync();
+    }
+    //this is for get state usign country id
+    public async Task<IEnumerable<State_Master>> sp_sys_statemaster_Select(int country_id, int trans_id,bool isActive, int op_type)
+   {
+        var parameters = new[]
+        {
+        new SqlParameter("@country_id", country_id),
+        new SqlParameter("@trans_id", trans_id ),
+        new SqlParameter("@isActive", isActive ),
+        new SqlParameter("@op_type", op_type)
+    };
+
+        return await _context.StateMasters
+            .FromSqlRaw("EXEC sp_sys_statemaster_Select @country_id, @trans_id,@isActive, @op_type", parameters)
+            .ToListAsync();
+    }
+
+    //this sp for get city using stateid
+    public async Task<IEnumerable<State_Master>> citymaster(int country_id, int trans_id, bool isActive, int op_type)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@country_id", country_id),
+        new SqlParameter("@trans_id", trans_id ),
+        new SqlParameter("@isActive", isActive ),
+        new SqlParameter("@op_type", op_type)
+    };
+
+        return await _context.StateMasters
+            .FromSqlRaw("EXEC sp_sys_statemaster_Select @country_id, @trans_id,@isActive, @op_type", parameters)
+            .ToListAsync();
+    }
+    public async Task<List<Brand_Master>> Sp_getBrandMaster(int Company_Id, int Brand_Id, string Brand_Name,string Company_Ids, int Optype)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@Company_Id", Company_Id),
+        new SqlParameter("@Brand_Id", Brand_Id ),
+         new SqlParameter("@Brand_Name", (object)Brand_Name ?? DBNull.Value),
+        new SqlParameter("@Company_Ids", (object)Company_Ids ?? DBNull.Value),
+        new SqlParameter("@Optype", Optype)
+    };
+
+        return await _context.BrandMasters
+            .FromSqlRaw("EXEC sp_Set_BrandMaster_SelectRow @Company_Id, @Brand_Id,@Brand_Name,@Company_Ids, @Optype", parameters)
+            .ToListAsync();
+    }
+
+    public async Task<List<Employee_Master>> Set_EmployeeMaster_SelectEmployeeName(int CompanyId, string EmpName)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@CompanyId", CompanyId),     
+        new SqlParameter("@EmpName", (object)EmpName ?? DBNull.Value),       
+    };
+
+        return await _context.EmployeeMasters
+            .FromSqlRaw("EXEC Set_EmployeeMaster_SelectEmployeeName @CompanyId,@EmpName", parameters)
+            .ToListAsync();
+    }
 
 }
 
